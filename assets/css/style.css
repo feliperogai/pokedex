@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Press+Start+2P&display=swap');
+
+:root{
+
+/* Fonts */
+--font1: "Poppins", sans-serif;
+--font2: "Press Start 2P", system-ui;
+
+/* Pokémon Color Palettes */
+--color: #B69E31;     /* (Rock) */
+--color: #70559B;     /* (Ghost) */
+--color: #B7B9D0;     /* (Steel) */
+--color: #6493EB;     /* (Water) */
+--color: #74CB48;     /* (Grass) */
+--color: #FB5584;     /* (Psychic) */
+--color: #9AD6DF;     /* (Ice) */
+--color: #75574C;     /* (Dark) */
+--color: #E69EAC;     /* (Fairy) */
+--color: #AAA67F;     /* (Normal) */
+--color: #C12239;     /* (Fighting) */
+--color: #A891EC;     /* (Flying) */
+--color: #A43E9E;     /* (Poison) */
+--color: #DEC16B;     /* (Ground) */
+--color: #A7B723;     /* (Bug) */
+--color: #F57D31;     /* (Fire) */
+--color: #7037FF;     /* (Dragon) */
+--color: #F9CF28;     /* (Electric) */
+}
+
+/* Defines a box model where the width and height include content, padding, and border, but not the margin */
+* {
+    box-sizing: border-box;
+}
+
+/* Style for the header */
+header {
+    background-color: #E7091F; /* Red background color */
+    height: 10vh; /* 10% of viewport height */
+    width: 100%; /* Full width */
+    position: fixed; /* Fixed header at the top */
+    top: 0; /* Position at the top */
+    display: flex; /* Uses flexbox for alignment */
+    justify-content: center; /* Horizontally centers */
+    align-items: center; /* Vertically centers */
+}
+
+/* Style for the image inside the header */
+header img {
+    width: 27%; /* Image width */
+}
+
+/* Style for the page body */
+body {
+    background-color: #D6D6D6; /* Light gray background color */
+    margin: 0; /* Removes default margins */
+    display: flex; /* Uses flexbox for alignment */
+    justify-content: center; /* Horizontally centers */
+    align-items: center; /* Vertically centers */
+    height: 100vh; /* Full viewport height */
+    box-sizing: border-box; /* Uses border-box box model */
+}
+
+/* Style for the footer */
+footer {
+    height: 10vh; /* 10% of viewport height */
+    width: 100%; /* Full width */
+    background-color: #000000; /* Black background color */
+    display: flex; /* Uses flexbox for alignment */
+    justify-content: center; /* Horizontally centers */
+    align-items: center; /* Vertically centers */
+    transition: all .5s ease-in-out; /* Smooth transition */
+    position: fixed; /* Fixed footer at the bottom */
+    bottom: 0; /* Position at the bottom */
+}
+
+/* Style for the text inside the footer */
+footer div {
+    color: white; /* White text color */
+    font-size: 1.3em; /* Font size */
+    font-weight: 500; /* Font weight */
+    text-transform: uppercase; /* Uppercase text */
+}
+
+/* Style for the Pokédex */
+#pokedex {
+    width: 22rem; /* Pokédex width */
+    height: 35rem; /* Pokédex height */
+    background-color: #74CB48; /* Green background color */
+    border: 1px solid #000000; /* 1px black border */
+    border-radius: 8px; /* Rounded border */
+    padding: 0.3rem; /* Internal spacing */
+    transition: background-color 0.5s ease-in-out; /* Smooth background color transition */
+}
+
+/* Style for the top part of the Pokédex */
+#top {
+    height: 40%; /* 40% of the Pokédex */
+    padding: 0.5rem; /* Internal spacing */
+    background: url("../images/pokeball.png"); /* Background image */
+    background-repeat: no-repeat; /* No repeat */
+    background-position: right; /* Position to the right */
+}
+
+/* Style for the top bar of the Pokédex */
+#top-bar {
+    display: flex; /* Uses flexbox for alignment */
+    justify-content: space-between; /* Space between items */
+    color: #FFFFFF; /* White text color */
+    padding: 0 1.2rem; /* Internal spacing */
+}
+
+/* Style for the search box in the Pokédex */
+#search {
+    color: #FFFFFF; /* White text color */
+    background: none; /* Transparent background */
+    border: none; /* No border */
+    font-size: 1.0rem; /* Font size */
+    font-weight: bold; /* Font weight */
+    width: 60%; /* Search box width */
+}
+
+/* Style for the search box when focused */
+#search:focus {
+    outline: none; /* Removes outline on focus */
+}
+
+/* Style for the Pokémon image placeholder */
+#poke-image-placeholder {
+    display: flex; /* Uses flexbox for alignment */
+    justify-content: center; /* Horizontally centers */
+}
+
+/* Style for the Pokémon image */
+#pokemon-image {
+    width: 160px; /* Image width */
+    height: 160px; /* Image height */
+    transform: translateY(6rem); /* Move image down */
+}
+
+/* Style for the data section of the Pokédex */
+#data {
+    background-color: #FFFFFF; /* White background color */
+    height: 60%; /* 60% of the Pokédex */
+    border-radius: 8px; /* Rounded border */
+    padding-top: 5rem; /* Top padding */
+}
+
+/* Style for Pokémon types */
+#types {
+    display: flex; /* Uses flexbox for alignment */
+    justify-content: center; /* Horizontally centers */
+    gap: 1rem; /* Gap between types */
+    color: #FFFFFF; /* White text color */
+    text-transform: uppercase; /* Uppercase text */
+    font-family: "Press Start 2P", system-ui; /* Font */
+}
+
+/* Style for each Pokémon type */
+.type {
+    color: #FFFFFF; /* White text color */
+    padding: 0.3rem 0.6rem; /* Internal spacing */
+    font-size: 0.8rem; /* Font size */
+    font-weight: bold; /* Font weight */
+}
+
+/* Style for titles in the data section */
+#data h4 {
+    text-align: center; /* Center text alignment */
+    padding: 4%; /* Internal padding */
+}
+
+/* Style for statistics */
+#stats {
+    width: 80%; /* Width */
+    font-size: 0.8rem; /* Font size */
+}
+
+/* Style for statistic rows */
+.stat-row {
+    display: flex; /* Uses flexbox for alignment */
+}
+
+/* Style for statistic description and number */
+.stat-desc, .stat-number {
+    width: 30%; /* Width */
+}
+
+/* Style for statistic description */
+.stat-desc {
+    color: #74CB48; /* Green color */
+    font-weight: bold; /* Font weight */
+    justify-content: right; /* Right alignment */
+    border-right: 1px solid #808080; /* Right border */
+    transition: 0.5s ease-in-out; /* Smooth transition */
+}
+
+/* Style for statistic bars */
+.stat-bar {
+    width: 70%; /* Width */
+    display: flex; /* Uses flexbox for alignment */
+    align-items: center; /* Vertically centers */
+}
+
+/* Style for outer statistic bars */
+.bar-outer {
+    background-color: rgba(116, 203, 72, 0.3); /* Background color */
+    display: flex; /* Uses flexbox for alignment */
+    width: 100%; /* Full width */
+    height: 0.3rem; /* Height */
+    transition: 0.5s ease-in-out; /* Smooth transition */
+}
+
+/* Style for inner statistic bars */
+.bar-inner {
+    background-color: #74CB48; /* Green color */
+    transition: 0.5s ease-in-out; /* Smooth transition */
+}
+
+/* Style for base stats section */
+#base-stats {
+    transition: 0.5s ease-in-out; /* Smooth transition */
+}

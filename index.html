@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- NES.css for styling -->
+    <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+    <!-- Google Fonts for Press Start 2P font -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <!-- Favicon -->
+    <link rel="icon" href="./assets/images/icon.png">
+    <title>Rogai - Pokédex</title>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div>
+            <center>
+                <!-- Banner Image -->
+                <h3><img src="./assets/images/banner.png" alt="Banner"></h3>
+            </center>
+        </div>
+    </header>
+
+    <!-- Pokédex Container -->
+    <div id="pokedex">
+        <!-- Top Section -->
+        <div id="top">
+            <!-- Top Bar with Search and Pokémon Number -->
+            <div id="top-bar">
+                <input type="text" id="search" value="Bulbasaur">
+                <span id="number">#001</span>
+            </div>
+            <!-- Pokémon Image Placeholder -->
+            <div id="poke-image-placeholder">
+                <img src="./assets/images/bulbasaur.png" id="pokemon-image" alt="Bulbasaur">
+            </div>
+        </div>
+        <!-- Data Section -->
+        <div id="data">
+            <!-- Pokémon Types -->
+            <div id="types">
+                <span style="background-color: #74CB48;" class="type">Grass</span>
+                <span style="background-color: #A43E9E;" class="type">Poison</span>
+            </div>
+            <!-- Base Stats Title -->
+            <h4 id="base-stats" style="color: #74CB48">Base Stats</h4>
+            <!-- Stats Section -->
+            <center>
+                <div id="stats">
+                    <!-- Stat Rows -->
+                    <div class="stat-row">
+                        <div class="stat-desc">HP</div>
+                        <div class="stat-number">045</div>
+                        <div class="stat-bar">
+                            <div class="bar-outer">
+                                <div class="bar-inner" style="width: 45%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Stat Rows -->
+                    <div class="stat-row">
+                        <div class="stat-desc">ATK</div>
+                        <div class="stat-number">049</div>
+                        <div class="stat-bar">
+                            <div class="bar-outer">
+                                <div class="bar-inner" style="width: 45%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Stat Rows -->
+                    <div class="stat-row">
+                        <div class="stat-desc">DEF</div>
+                        <div class="stat-number">049</div>
+                        <div class="stat-bar">
+                            <div class="bar-outer">
+                                <div class="bar-inner" style="width: 45%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Stat Rows -->
+                    <div class="stat-row">
+                        <div class="stat-desc">STAK</div>
+                        <div class="stat-number">065</div>
+                        <div class="stat-bar">
+                            <div class="bar-outer">
+                                <div class="bar-inner" style="width: 45%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Stat Rows -->
+                    <div class="stat-row">
+                        <div class="stat-desc">SDEF</div>
+                        <div class="stat-number">065</div>
+                        <div class="stat-bar">
+                            <div class="bar-outer">
+                                <div class="bar-inner" style="width: 45%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Stat Rows -->
+                    <div class="stat-row">
+                        <div class="stat-desc">SPD</div>
+                        <div class="stat-number">045</div>
+                        <div class="stat-bar">
+                            <div class="bar-outer">
+                                <div class="bar-inner" style="width: 45%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </center>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div>
+            <!-- Footer Text -->
+            <h3>© Felipe Rogai - 2024.</h3>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="./assets/js/script.js"></script>
+</body>
+</html>
