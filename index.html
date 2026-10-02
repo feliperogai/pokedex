@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- NES.css for styling -->
-    <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
-    <!-- Google Fonts for Press Start 2P font -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <meta name="description" content="Retro pixel-art Pokédex powered by PokéAPI.">
+    <!-- Google Fonts: Press Start 2P (pixel) + VT323 (retro terminal) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="./assets/css/style.css">
     <!-- Favicon -->
@@ -16,111 +17,121 @@
 <body>
     <!-- Header -->
     <header>
-        <div>
-            <center>
-                <!-- Banner Image -->
-                <h3><img src="./assets/images/banner.png" alt="Banner"></h3>
-            </center>
-        </div>
+        <!-- Banner Image -->
+        <img src="./assets/images/banner.png" alt="Pokémon" class="banner">
+        <p class="subtitle">- POKéDEX v1.0 -</p>
     </header>
 
-    <!-- Pokédex Container -->
-    <div id="pokedex">
-        <!-- Top Section -->
-        <div id="top">
-            <!-- Top Bar with Search and Pokémon Number -->
-            <div id="top-bar">
-                <input type="text" id="search" value="Bulbasaur">
-                <span id="number">#001</span>
+    <main>
+        <!-- Pokédex Container -->
+        <div id="pokedex">
+            <!-- Device lights -->
+            <div id="lights">
+                <span class="big-light" id="status-light"></span>
+                <span class="small-light red"></span>
+                <span class="small-light yellow"></span>
+                <span class="small-light green"></span>
             </div>
-            <!-- Pokémon Image Placeholder -->
-            <div id="poke-image-placeholder">
-                <img src="./assets/images/bulbasaur.png" id="pokemon-image" alt="Bulbasaur">
-            </div>
-        </div>
-        <!-- Data Section -->
-        <div id="data">
-            <!-- Pokémon Types -->
-            <div id="types">
-                <span style="background-color: #74CB48;" class="type">Grass</span>
-                <span style="background-color: #A43E9E;" class="type">Poison</span>
-            </div>
-            <!-- Base Stats Title -->
-            <h4 id="base-stats" style="color: #74CB48">Base Stats</h4>
-            <!-- Stats Section -->
-            <center>
-                <div id="stats">
-                    <!-- Stat Rows -->
-                    <div class="stat-row">
-                        <div class="stat-desc">HP</div>
-                        <div class="stat-number">045</div>
-                        <div class="stat-bar">
-                            <div class="bar-outer">
-                                <div class="bar-inner" style="width: 45%;"></div>
-                            </div>
-                        </div>
+
+            <!-- Screen frame -->
+            <div id="screen-frame">
+                <!-- Top Section -->
+                <div id="top">
+                    <!-- Top Bar with Search and Pokémon Number -->
+                    <div id="top-bar">
+                        <form id="search-form" autocomplete="off">
+                            <span class="prompt">&gt;</span>
+                            <input type="text" id="search" value="Bulbasaur" aria-label="Search Pokémon by name or number" spellcheck="false">
+                        </form>
+                        <span id="number">#001</span>
                     </div>
-                    <!-- Stat Rows -->
-                    <div class="stat-row">
-                        <div class="stat-desc">ATK</div>
-                        <div class="stat-number">049</div>
-                        <div class="stat-bar">
-                            <div class="bar-outer">
-                                <div class="bar-inner" style="width: 45%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Stat Rows -->
-                    <div class="stat-row">
-                        <div class="stat-desc">DEF</div>
-                        <div class="stat-number">049</div>
-                        <div class="stat-bar">
-                            <div class="bar-outer">
-                                <div class="bar-inner" style="width: 45%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Stat Rows -->
-                    <div class="stat-row">
-                        <div class="stat-desc">STAK</div>
-                        <div class="stat-number">065</div>
-                        <div class="stat-bar">
-                            <div class="bar-outer">
-                                <div class="bar-inner" style="width: 45%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Stat Rows -->
-                    <div class="stat-row">
-                        <div class="stat-desc">SDEF</div>
-                        <div class="stat-number">065</div>
-                        <div class="stat-bar">
-                            <div class="bar-outer">
-                                <div class="bar-inner" style="width: 45%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Stat Rows -->
-                    <div class="stat-row">
-                        <div class="stat-desc">SPD</div>
-                        <div class="stat-number">045</div>
-                        <div class="stat-bar">
-                            <div class="bar-outer">
-                                <div class="bar-inner" style="width: 45%;"></div>
-                            </div>
-                        </div>
+                    <!-- Pokémon Image Placeholder -->
+                    <div id="poke-image-placeholder">
+                        <img src="./assets/images/bulbasaur.png" id="pokemon-image" alt="Bulbasaur">
+                        <div id="loading" hidden>LOADING<span class="dots">...</span></div>
                     </div>
                 </div>
-            </center>
+
+                <!-- Data Section -->
+                <div id="data">
+                    <!-- Pokémon Name -->
+                    <h2 id="pokemon-name">BULBASAUR</h2>
+
+                    <!-- Pokémon Types -->
+                    <div id="types">
+                        <span style="background-color: #74CB48;" class="type">Grass</span>
+                        <span style="background-color: #A43E9E;" class="type">Poison</span>
+                    </div>
+
+                    <!-- Physical info -->
+                    <div id="info">
+                        <div><span class="label">HT</span> <span id="height">0.7 m</span></div>
+                        <div><span class="label">WT</span> <span id="weight">6.9 kg</span></div>
+                    </div>
+
+                    <!-- Base Stats Title -->
+                    <h4 id="base-stats">Base Stats</h4>
+
+                    <!-- Stats Section -->
+                    <div id="stats">
+                        <div class="stat-row">
+                            <div class="stat-desc">HP</div>
+                            <div class="stat-number">045</div>
+                            <div class="stat-bar"><div class="bar-outer"><div class="bar-inner" style="width: 18%;"></div></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-desc">ATK</div>
+                            <div class="stat-number">049</div>
+                            <div class="stat-bar"><div class="bar-outer"><div class="bar-inner" style="width: 19%;"></div></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-desc">DEF</div>
+                            <div class="stat-number">049</div>
+                            <div class="stat-bar"><div class="bar-outer"><div class="bar-inner" style="width: 19%;"></div></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-desc">SATK</div>
+                            <div class="stat-number">065</div>
+                            <div class="stat-bar"><div class="bar-outer"><div class="bar-inner" style="width: 25%;"></div></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-desc">SDEF</div>
+                            <div class="stat-number">065</div>
+                            <div class="stat-bar"><div class="bar-outer"><div class="bar-inner" style="width: 25%;"></div></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-desc">SPD</div>
+                            <div class="stat-number">045</div>
+                            <div class="stat-bar"><div class="bar-outer"><div class="bar-inner" style="width: 18%;"></div></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Dialog box (messages / errors) -->
+                    <div id="message" role="status" aria-live="polite">A strange seed was planted on its back at birth.</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div id="controls">
+                <div id="dpad">
+                    <button type="button" id="prev" class="dpad-btn left" aria-label="Previous Pokémon">&#9664;</button>
+                    <span class="dpad-center"></span>
+                    <button type="button" id="next" class="dpad-btn right" aria-label="Next Pokémon">&#9654;</button>
+                </div>
+                <div id="action-buttons">
+                    <button type="button" id="random" class="round-btn" aria-label="Random Pokémon">?</button>
+                    <button type="button" id="shiny" class="round-btn" aria-label="Toggle shiny sprite">&#9733;</button>
+                </div>
+            </div>
+            <p class="hint">&#9664; &#9654; NAVIGATE &nbsp; ? RANDOM &nbsp; &#9733; SHINY</p>
         </div>
-    </div>
+    </main>
 
     <!-- Footer -->
     <footer>
-        <div>
-            <!-- Footer Text -->
-            <h3>© Felipe Rogai - 2024.</h3>
-        </div>
+        <!-- Footer Text -->
+        <p>© Felipe Rogai - 2024</p>
+        <p class="press-start">PRESS START<span class="blink">_</span></p>
     </footer>
 
     <!-- JavaScript -->
