@@ -11,6 +11,7 @@
     --cream: #f8f8e8;
     --cream-dark: #d8d8c0;
     --screen-shadow: #a8a890;
+    --gold: #f5c518;
 
     /* Current Pokémon type color (updated by script.js) */
     --main: rgb(116, 203, 72);
@@ -18,6 +19,9 @@
 
     /* Pixel border unit */
     --px: 4px;
+
+    /* Scale applied to the Pokédex so it always fits the screen (set by script.js) */
+    --scale: 1;
 }
 
 /* Defines a box model where the width and height include content, padding, and border */
@@ -31,12 +35,19 @@ img {
     image-rendering: crisp-edges;
 }
 
-/* Style for the page body: checkered pixel background + CRT scanlines */
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Page: fixed to the viewport (no scroll), checkered pixel background + CRT scanlines */
 body {
     margin: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
     font-family: var(--font-pixel);
     color: var(--ink);
     background-color: #2b2b3a;
@@ -45,6 +56,8 @@ body {
         linear-gradient(45deg, #333345 25%, transparent 25%, transparent 75%, #333345 75%);
     background-size: 32px 32px;
     background-position: 0 0, 16px 16px;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior: none;
 }
 
 body::after {
@@ -66,45 +79,52 @@ body::after {
 header {
     background-color: var(--red);
     border-bottom: var(--px) solid var(--ink);
-    box-shadow: 0 var(--px) 0 var(--red-dark), 0 calc(var(--px) * 2) 0 var(--ink);
-    padding: 1rem 1rem 0.8rem;
+    box-shadow: 0 var(--px) 0 var(--red-dark);
+    padding: clamp(4px, 1.2vh, 14px) 1rem;
+    padding-top: max(clamp(4px, 1.2vh, 14px), env(safe-area-inset-top));
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 0.6rem;
+    gap: clamp(8px, 2vw, 20px);
 }
 
 header .banner {
-    width: min(260px, 60vw);
+    height: clamp(26px, 7vh, 72px);
+    width: auto;
     image-rendering: auto;
-    filter: drop-shadow(4px 4px 0 var(--ink));
+    filter: drop-shadow(3px 3px 0 var(--ink));
     animation: float 3s steps(6) infinite;
 }
 
 header .subtitle {
     margin: 0;
     color: var(--cream);
-    font-size: 0.6rem;
+    font-size: clamp(8px, 1.6vh, 14px);
     letter-spacing: 2px;
     text-shadow: 2px 2px 0 var(--ink);
+    padding: 0.4em 0.6em;
+    border: 2px solid var(--ink);
+    background: var(--red-dark);
 }
 
-/* ---------- Main ---------- */
-main {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 2rem 1rem 2.5rem;
+/* ---------- Stage (area where the Pokédex is scaled to fit) ---------- */
+#stage {
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
 }
 
 /* ---------- Pokédex device ---------- */
 #pokedex {
-    width: 100%;
-    max-width: 23rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(var(--scale));
+    transform-origin: center center;
+    display: flex;
+    gap: 14px;
+    padding: 16px;
     background-color: var(--red);
-    padding: 1rem;
-    position: relative;
     /* Stepped "pixel" border with notched corners */
     box-shadow:
         0 calc(var(--px) * -1) 0 0 var(--ink),
@@ -114,19 +134,89 @@ main {
         inset calc(var(--px) * -1) calc(var(--px) * -1) 0 0 var(--red-dark),
         inset var(--px) var(--px) 0 0 var(--red-light),
         calc(var(--px) * 3) calc(var(--px) * 3) 0 0 rgba(0, 0, 0, 0.45);
+    opacity: 0;
 }
 
-/* Device lights */
+#pokedex.ready {
+    opacity: 1;
+    transition: opacity 0.3s steps(3);
+}
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+    min-height: 0;
+}
+
+/* --- Portrait layout: everything stacked --- */
+#pokedex.tall {
+    width: 380px;
+    height: 800px;
+    flex-direction: column;
+}
+
+#pokedex.tall .panel {
+    display: contents;
+}
+
+#pokedex.tall .hinge,
+#pokedex.tall .hint {
+    display: none;
+}
+
+#pokedex.tall #lights { order: 1; }
+#pokedex.tall #screen-frame { order: 2; }
+#pokedex.tall #data { order: 3; flex: 1; }
+#pokedex.tall #controls { order: 4; }
+
+#pokedex.tall #top { height: 220px; }
+
+/* --- Landscape layout: open Pokédex, two halves side by side --- */
+#pokedex.wide {
+    width: 900px;
+    height: 540px;
+    flex-direction: row;
+}
+
+#pokedex.wide .panel.left {
+    width: 410px;
+    flex-shrink: 0;
+}
+
+#pokedex.wide .panel.right {
+    flex: 1;
+}
+
+#pokedex.wide #screen-frame,
+#pokedex.wide #top,
+#pokedex.wide #data {
+    flex: 1;
+}
+
+.hinge {
+    width: 22px;
+    margin: -16px 0;
+    flex-shrink: 0;
+    background:
+        repeating-linear-gradient(180deg, transparent 0 40px, var(--ink) 40px 44px),
+        linear-gradient(90deg, var(--red-dark) 0 4px, #b0001c 4px 18px, var(--red-dark) 18px);
+    border-left: var(--px) solid var(--ink);
+    border-right: var(--px) solid var(--ink);
+}
+
+/* ---------- Device lights ---------- */
 #lights {
     display: flex;
     align-items: flex-start;
-    gap: 0.6rem;
-    margin-bottom: 1rem;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
 .big-light {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     background: #29a8ff;
     border: var(--px) solid var(--cream);
     outline: var(--px) solid var(--ink);
@@ -140,6 +230,7 @@ main {
 .small-light {
     width: 14px;
     height: 14px;
+    margin-top: 2px;
     outline: 3px solid var(--ink);
     box-shadow: inset -3px -3px 0 rgba(0, 0, 0, 0.35), inset 3px 3px 0 rgba(255, 255, 255, 0.5);
 }
@@ -148,10 +239,23 @@ main {
 .small-light.yellow { background: #ffd51c; }
 .small-light.green { background: #3bd16f; }
 
-/* Screen frame (light bezel around the screen) */
+#number {
+    margin-left: auto;
+    align-self: center;
+    color: var(--cream);
+    font-size: 18px;
+    text-shadow: 3px 3px 0 var(--ink);
+}
+
+/* ---------- Screen frame (light bezel around the screen) ---------- */
 #screen-frame {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    flex-shrink: 0;
     background: var(--cream-dark);
-    padding: 0.75rem;
+    padding: 12px 12px 8px;
     box-shadow:
         0 calc(var(--px) * -1) 0 0 var(--ink),
         0 var(--px) 0 0 var(--ink),
@@ -160,51 +264,60 @@ main {
         inset calc(var(--px) * -1) calc(var(--px) * -1) 0 0 var(--screen-shadow);
 }
 
-/* ---------- Top part (sprite area) ---------- */
+#speaker {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+    padding-right: 6px;
+}
+
+#speaker span {
+    width: 26px;
+    height: 4px;
+    background: var(--ink);
+}
+
+/* ---------- Sprite screen ---------- */
 #top {
     position: relative;
-    height: 13rem;
-    padding: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 8px;
     background-color: var(--main);
     background-image:
         url("../images/pokeball.png"),
         repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0 4px, transparent 4px 8px);
     background-repeat: no-repeat, repeat;
     background-position: right -30px center, 0 0;
-    background-size: 150px, auto;
+    background-size: 160px, auto;
     border: var(--px) solid var(--ink);
     transition: background-color 0.4s steps(4);
     overflow: hidden;
 }
 
-/* Top bar of the Pokédex */
-#top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-    position: relative;
-    z-index: 2;
-}
-
+/* Search bar */
 #search-form {
     display: flex;
     align-items: center;
-    flex: 1;
-    min-width: 0;
+    position: relative;
+    z-index: 2;
     background: rgba(0, 0, 0, 0.35);
-    padding: 0.35rem 0.5rem;
+    padding: 4px 4px 4px 8px;
     border: 2px solid var(--ink);
+}
+
+#search-form:focus-within {
+    border-color: var(--cream);
 }
 
 .prompt {
     color: var(--cream);
-    font-size: 0.7rem;
-    margin-right: 0.4rem;
+    font-size: 11px;
+    margin-right: 6px;
     animation: blink 1s steps(1) infinite;
 }
 
-/* Search box */
 #search {
     flex: 1;
     min-width: 0;
@@ -212,30 +325,40 @@ main {
     background: none;
     border: none;
     font-family: var(--font-pixel);
-    font-size: 0.7rem;
+    /* 16px avoids the automatic zoom on iOS when focusing the input */
+    font-size: 16px;
     text-transform: uppercase;
     text-shadow: 2px 2px 0 var(--ink);
     caret-color: var(--cream);
+    padding: 2px 0;
 }
 
 #search:focus {
     outline: none;
 }
 
-#search-form:focus-within {
-    border-color: var(--cream);
+#search::-webkit-calendar-picker-indicator {
+    display: none !important;
 }
 
-#number {
-    color: #ffffff;
-    font-size: 0.75rem;
-    text-shadow: 2px 2px 0 var(--ink);
+#search-btn {
+    font-size: 10px;
+    padding: 6px 8px;
+    color: var(--ink);
+    background: var(--gold);
+    border: 2px solid var(--ink);
+    box-shadow: inset -2px -2px 0 #b08900, inset 2px 2px 0 #fff3b0;
+}
+
+#search-btn:active {
+    transform: translate(1px, 1px);
 }
 
 /* Sprite area */
 #poke-image-placeholder {
-    position: absolute;
-    inset: 2.6rem 0 0 0;
+    position: relative;
+    flex: 1;
+    min-height: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -245,19 +368,25 @@ main {
 #poke-image-placeholder::before {
     content: "";
     position: absolute;
-    bottom: 1.1rem;
-    width: 120px;
-    height: 14px;
+    bottom: 8%;
+    width: 130px;
+    height: 16px;
     background: rgba(0, 0, 0, 0.25);
     border-radius: 50%;
 }
 
 #pokemon-image {
-    width: 160px;
-    height: 160px;
+    width: 156px;
+    height: 156px;
+    object-fit: contain;
     position: relative;
     filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, 0.35));
     animation: bob 1.2s steps(2) infinite;
+}
+
+#pokedex.wide #pokemon-image {
+    width: 260px;
+    height: 260px;
 }
 
 #pokemon-image.appear {
@@ -267,10 +396,10 @@ main {
 #loading {
     position: absolute;
     color: #ffffff;
-    font-size: 0.7rem;
+    font-size: 12px;
     text-shadow: 2px 2px 0 var(--ink);
     background: rgba(0, 0, 0, 0.45);
-    padding: 0.5rem 0.7rem;
+    padding: 8px 12px;
 }
 
 #loading .dots {
@@ -279,81 +408,108 @@ main {
 
 /* ---------- Data part ---------- */
 #data {
-    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     background-color: var(--cream);
     border: var(--px) solid var(--ink);
-    padding: 0.9rem 0.8rem 0.8rem;
-    box-shadow: inset 0 calc(var(--px) * -1) 0 var(--cream-dark);
+    padding: 12px 12px 10px;
+    box-shadow: inset 0 calc(var(--px) * -1) 0 var(--cream-dark), 0 0 0 var(--px) var(--cream-dark);
+    overflow: hidden;
 }
 
 #pokemon-name {
-    margin: 0 0 0.8rem;
+    margin: 0;
     text-align: center;
-    font-size: 0.95rem;
+    font-size: 16px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#genus {
+    margin: 4px 0 8px;
+    text-align: center;
+    font-family: var(--font-term);
+    font-size: 18px;
+    color: #555;
 }
 
 /* Pokémon types */
 #types {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.7rem;
+    gap: 10px;
 }
 
 .type {
     color: #ffffff;
-    padding: 0.35rem 0.6rem;
-    font-size: 0.55rem;
+    padding: 5px 9px;
+    font-size: 9px;
     text-transform: uppercase;
     text-shadow: 1px 1px 0 var(--ink);
     border: 2px solid var(--ink);
     box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3), inset 2px 2px 0 rgba(255, 255, 255, 0.35), 2px 2px 0 var(--ink);
 }
 
-/* Height / weight */
+/* Height / weight / abilities */
 #info {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
-    margin-top: 0.8rem;
+    flex-wrap: wrap;
+    column-gap: 16px;
+    margin-top: 8px;
     font-family: var(--font-term);
-    font-size: 1.25rem;
+    font-size: 19px;
+    line-height: 1.1;
+    text-transform: capitalize;
+}
+
+#info > div {
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #info .label {
     font-family: var(--font-pixel);
-    font-size: 0.55rem;
+    font-size: 9px;
     color: var(--main);
     text-shadow: 1px 1px 0 var(--ink);
 }
 
 /* Base stats title */
 #base-stats {
-    margin: 0.9rem 0 0.6rem;
+    margin: 10px 0 6px;
     text-align: center;
-    font-size: 0.65rem;
+    font-size: 10px;
     text-transform: uppercase;
     color: var(--main);
     text-shadow: 1px 1px 0 var(--ink);
     transition: color 0.4s steps(4);
 }
 
-#base-stats::before,
-#base-stats::after {
-    content: " \2014 ";
+#total {
     color: var(--ink);
     text-shadow: none;
+    margin-left: 6px;
+}
+
+#total::before {
+    content: "\00B7  TOTAL ";
+    color: var(--main);
+    text-shadow: 1px 1px 0 var(--ink);
 }
 
 /* Stats */
 #stats {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    font-size: 0.55rem;
+    gap: 5px;
+    font-size: 9px;
 }
 
 .stat-row {
@@ -362,9 +518,9 @@ main {
 }
 
 .stat-desc {
-    width: 3.2rem;
+    width: 52px;
     text-align: right;
-    padding-right: 0.5rem;
+    padding-right: 8px;
     color: var(--main);
     text-shadow: 1px 1px 0 var(--ink);
     border-right: 2px solid var(--ink);
@@ -372,7 +528,7 @@ main {
 }
 
 .stat-number {
-    width: 2.8rem;
+    width: 44px;
     text-align: center;
 }
 
@@ -382,7 +538,7 @@ main {
 
 /* Segmented, pixel-style bars */
 .bar-outer {
-    height: 10px;
+    height: 12px;
     background-color: var(--main-soft);
     border: 2px solid var(--ink);
     display: flex;
@@ -398,17 +554,19 @@ main {
 
 /* RPG-style dialog box */
 #message {
-    margin-top: 0.9rem;
-    min-height: 3.6rem;
-    padding: 0.4rem 0.6rem;
+    flex: 1;
+    min-height: 64px;
+    margin-top: 12px;
+    padding: 6px 10px;
     background: #ffffff;
     font-family: var(--font-term);
-    font-size: 1.2rem;
+    font-size: 20px;
     line-height: 1.05;
     border: var(--px) double var(--ink);
     outline: 2px solid var(--ink);
     outline-offset: 2px;
     position: relative;
+    overflow: hidden;
 }
 
 #message::after {
@@ -416,7 +574,7 @@ main {
     position: absolute;
     right: 6px;
     bottom: 2px;
-    font-size: 0.7rem;
+    font-size: 11px;
     animation: blink 0.8s steps(1) infinite;
 }
 
@@ -429,8 +587,8 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 1.1rem;
-    padding: 0 0.3rem;
+    flex-shrink: 0;
+    padding: 0 4px;
 }
 
 #dpad {
@@ -442,16 +600,17 @@ button {
     font-family: var(--font-pixel);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .dpad-btn,
 .dpad-center {
-    width: 36px;
-    height: 36px;
+    width: 46px;
+    height: 46px;
     background: #2a2a2a;
     color: #bdbdbd;
     border: 3px solid var(--ink);
-    font-size: 0.7rem;
+    font-size: 14px;
     padding: 0;
     box-shadow: inset -3px -3px 0 #111, inset 3px 3px 0 #555;
 }
@@ -475,64 +634,81 @@ button {
 
 #action-buttons {
     display: flex;
-    gap: 0.8rem;
+    gap: 12px;
 }
 
 .round-btn {
-    width: 42px;
-    height: 42px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background: #3a3a3a;
     color: #d0d0d0;
     border: 3px solid var(--ink);
-    font-size: 0.75rem;
+    font-size: 16px;
     padding: 0;
     box-shadow: inset -3px -3px 0 #151515, inset 3px 3px 0 #666, 2px 2px 0 var(--ink);
 }
 
-.round-btn.active {
-    background: #f5c518;
+.round-btn.active,
+.round-btn.playing {
+    background: var(--gold);
     color: var(--ink);
     box-shadow: inset -3px -3px 0 #b08900, inset 3px 3px 0 #fff3b0, 2px 2px 0 var(--ink);
 }
 
-button:focus-visible,
-#search:focus-visible {
-    outline: 2px dashed var(--cream);
+button:focus-visible {
+    outline: 3px dashed var(--cream);
     outline-offset: 3px;
 }
 
 .hint {
-    margin: 0.9rem 0 0;
+    margin: 0;
     text-align: center;
-    font-size: 0.45rem;
+    font-size: 8px;
     color: var(--cream);
     text-shadow: 1px 1px 0 var(--ink);
     line-height: 1.6;
 }
 
+/* No keyboard on touch screens: hide the shortcut hint */
+@media (hover: none) {
+    .hint { display: none; }
+}
+
 /* ---------- Footer ---------- */
 footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    column-gap: 24px;
     background-color: var(--ink);
     border-top: var(--px) solid #333;
     color: var(--cream);
-    text-align: center;
-    padding: 1rem;
-    font-size: 0.6rem;
+    padding: clamp(4px, 1vh, 10px) 1rem;
+    padding-bottom: max(clamp(4px, 1vh, 10px), env(safe-area-inset-bottom));
+    font-size: clamp(7px, 1.3vh, 10px);
     text-transform: uppercase;
 }
 
 footer p {
-    margin: 0.3rem 0;
+    margin: 2px 0;
 }
 
 footer .press-start {
-    color: #f5c518;
-    font-size: 0.5rem;
+    color: var(--gold);
 }
 
 .blink {
     animation: blink 1s steps(1) infinite;
+}
+
+/* Very short screens (landscape phones): slim header and footer */
+@media (max-height: 420px) {
+    header .subtitle,
+    footer .press-start {
+        display: none;
+    }
 }
 
 /* ---------- Animations ---------- */
@@ -552,7 +728,7 @@ footer .press-start {
 
 @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+    50% { transform: translateY(-4px); }
 }
 
 @keyframes appear {
@@ -568,12 +744,4 @@ footer .press-start {
         animation: none !important;
         transition: none !important;
     }
-}
-
-/* Small screens */
-@media (max-width: 400px) {
-    #pokedex { padding: 0.75rem; }
-    #screen-frame { padding: 0.5rem; }
-    #pokemon-name { font-size: 0.8rem; }
-    #pokemon-image { width: 140px; height: 140px; }
 }
